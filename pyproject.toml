@@ -1,0 +1,14 @@
+[project]
+name = "ComfyUI-Legendary-Nodes"
+description = ""
+version = "0.2"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/ammahmoudi/ComfyUI-Legendary-Nodes"
+
+
+[tool.comfy]
+PublisherId = "ammahmoudi"
+DisplayName = "ComfyUI-Legendary-Nodes"
+Icon = ""
