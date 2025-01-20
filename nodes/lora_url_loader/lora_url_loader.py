@@ -4,12 +4,18 @@ import comfy.sd
 import comfy.utils
 from ..base_downloader import BaseModelDownloader
 from ..download_utils import DownloadManager
+import folder_paths
 
 
 class LoRADownloader(BaseModelDownloader):
     FUNCTION = "load_lora"
     RETURN_TYPES = ("MODEL", "CLIP")
     CATEGORY = "loaders"
+
+    def __init__(self):
+        # Base directory for LoRA files
+        self.output_dir = os.path.join(folder_paths.models_dir, "loras", "api_loras")
+        os.makedirs(self.output_dir, exist_ok=True)
 
     @staticmethod
     def INPUT_TYPES():
@@ -30,9 +36,18 @@ class LoRADownloader(BaseModelDownloader):
             }
         }
 
+    def resolve_path(self, path: str) -> str:
+        """Resolve relative paths to the ComfyUI models/loras/api_loras directory."""
+        if not os.path.isabs(path):
+            path = os.path.join(self.output_dir, path)
+        return os.path.abspath(path)
+
     def load_lora(self, model, clip, lora_link, strength_model, strength_clip, output):
         if strength_model == 0 and strength_clip == 0:
             return (model, clip)
+
+        # Resolve the output path relative to the base directory
+        output = self.resolve_path(output)
 
         # Download the LoRA file
         downloaded_lora_path = self.download_lora(lora_link, output)
@@ -91,4 +106,3 @@ class LoRADownloader(BaseModelDownloader):
         except Exception as e:
             print(f"Error downloading LoRA file: {e}")
             return None
-
