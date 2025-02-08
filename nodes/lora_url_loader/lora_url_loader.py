@@ -43,8 +43,15 @@ class LoRADownloader(BaseModelDownloader):
         return os.path.abspath(path)
 
     def load_lora(self, model, clip, lora_link, strength_model, strength_clip, output):
+        # Handle case when lora_link is empty
+        if not lora_link.strip():
+            print("LoRA link is empty. Returning the model and clip unchanged.")
+            return model, clip
+
+        # Handle case when both strengths are zero
         if strength_model == 0 and strength_clip == 0:
-            return (model, clip)
+            print("Strengths are zero. Returning the model and clip unchanged.")
+            return model, clip
 
         # Resolve the output path relative to the base directory
         output = self.resolve_path(output)
@@ -62,7 +69,7 @@ class LoRADownloader(BaseModelDownloader):
             model_lora, clip_lora = comfy.sd.load_lora_for_models(
                 model, clip, lora_content, strength_model, strength_clip
             )
-            return (model_lora, clip_lora)
+            return model_lora, clip_lora
         except Exception as e:
             raise RuntimeError(f"Error loading LoRA: {e}")
 
